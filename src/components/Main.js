@@ -17,7 +17,7 @@ export default class Main extends Component<Props> {
       super(props)
       this.state = {
           text: '',
-          placeholder: 'Digite sua tarefa aqui',
+          placeholder: 'Digite sua tarefa aqui...',
       }
   }
 
@@ -33,7 +33,9 @@ export default class Main extends Component<Props> {
               value={this.state.text}
           />
           <TouchableOpacity
-            style={styles.botao}>
+            style={styles.botao}
+            onPress={() => (this.setState({text: ''}))}
+            >
             <View>
               <Text style={styles.txtBotao}>+</Text>
             </View>
@@ -47,10 +49,18 @@ export default class Main extends Component<Props> {
       </View>
     );
   }
+
+  _adcionarTarefa(){
+    const tarefa = this.state.text;
+
+    () => this.setState({text: ''});
+
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
+    margin: 8,
     flex: 1,
     backgroundColor: '#F5FCFF',
   },
@@ -67,11 +77,12 @@ const styles = StyleSheet.create({
   botao: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'red',
+    backgroundColor: 'blue',
     padding: 5,
     height: 50,
     width:50,
-    borderRadius: 35
+    borderRadius: 35,
+    marginHorizontal: 8,
   },
 
   txtBotao: {

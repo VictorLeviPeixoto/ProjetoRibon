@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View,ListView, TouchableOpacity} from 'react-native';
+import {Platform, StyleSheet, Text, View,ListView, TouchableOpacity,Image} from 'react-native';
 
 type Props = {};
 export default class Lista extends Component<Props> {
@@ -25,9 +25,16 @@ export default class Lista extends Component<Props> {
                     <Text style={styles.txtLista}>{rowData}</Text>
                     
                     <TouchableOpacity
-                        style={styles.botao}>
+                        style={styles.botaoRemover}>
                         <View>
                          <Text style={styles.txtBotao}>-</Text>
+                        </View>
+                        
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.botaoEditar}>
+                        <View>
+                            <Image source={require('../imgs/edit.png')}/>
                         </View>
                         
                     </TouchableOpacity>
@@ -62,18 +69,29 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 20,
     padding: 10,
+    color: 'black',
   },
-  botao: {
+  botaoEditar: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'green',
+    padding: 5,
+    height: 35,
+    width: 35,
+    borderRadius: 35,
+    marginLeft: 10
+  },
+  botaoRemover: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'red',
     padding: 5,
-    height: 30,
-    width: 30,
+    height: 35,
+    width: 35,
     borderRadius: 35
   },
   txtBotao: {
-    fontSize: 20,
+    fontSize: 30,
     color: 'white',
   },
 });
