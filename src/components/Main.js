@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View,TextInput, TouchableOpacity} from 'react-native';
+import {Platform, StyleSheet, Text, View,TextInput, TouchableOpacity, AsyncStorage} from 'react-native';
 import Lista from './Lista';
 
 type Props = {};
@@ -18,12 +18,14 @@ export default class Main extends Component<Props> {
       this.state = {
           text: '',
           placeholder: 'Digite sua tarefa aqui...',
+          arrayTarefas: []
+
       }
   }
-
   render() {
     return (
       <View style={styles.container}>
+      
         <View style={styles.containerEdit}>
 
           <TextInput
@@ -34,7 +36,7 @@ export default class Main extends Component<Props> {
           />
           <TouchableOpacity
             style={styles.botao}
-            onPress={() => (this.setState({text: ''}))}
+            onPress={this.adcionarTarefa.bind(this)}
             >
             <View>
               <Text style={styles.txtBotao}>+</Text>
@@ -44,18 +46,51 @@ export default class Main extends Component<Props> {
 
         </View>
 
-        <Lista/>
+        <Lista lista={this.state.arrayTarefas}/>
 
       </View>
     );
   }
 
-  _adcionarTarefa(){
+  adcionarTarefa(){
     const tarefa = this.state.text;
+    let tarefaArray = this.state.arrayTarefas;
+    if (tarefa.length!==0){
+      let d = new Date();
 
-    () => this.setState({text: ''});
 
+      tarefaArray.push({
+        'tarefa': tarefa,
+        'data': 'Adcionado dia: '+d.getDay()+'/'+d.getMonth()+'/'+d.getFullYear(),
+        'id': d.getMilliseconds()
+        });
+
+
+      this.setState({text: ''});
+      this.setState({arrayTarefas: tarefaArray});
+      console.log(this.state.arrayTarefas);
+    }
   }
+
+//   _storeData = async () => {
+//     i++;
+//     try {
+//       await AsyncStorage.setItem( i , this.state.text);
+//     } catch (error) {
+//       // Error saving data
+//     }
+//   }
+//   _retrieveData = async () => {
+//     try {
+//       const value = await AsyncStorage.getItem('TASKS');
+//       if (value !== null) {
+//         // We have data!!
+//         console.log(value);
+//       }
+//      } catch (error) {
+//        // Error retrieving data
+//      }
+//   }
 }
 
 const styles = StyleSheet.create({

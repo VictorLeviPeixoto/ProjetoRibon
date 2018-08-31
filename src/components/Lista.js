@@ -6,12 +6,24 @@ export default class Lista extends Component<Props> {
   
     constructor (props){
         super(props);
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        this.lista;
         this.state = {
-            dataSource: ds.cloneWithRows(['Tarefa1','Tarefa2','Tarefa3'])
+            dataSource: ds.cloneWithRows(props.lista),
         }
         this._storeData;
         this._retrieveData;
+    }
+
+    componentWillReceiveProps(newProps){
+      console.log('mudou');
+      this.renovarLista();
+    }
+
+    renovarLista(){
+      const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+      console.log('Lista',this.props.lista);
+      this.state.dataSource = ds.cloneWithRows(this.props.lista);
     }
 
   render() {
@@ -23,33 +35,52 @@ export default class Lista extends Component<Props> {
             dataSource={this.state.dataSource}
             renderRow={rowData => 
             (
-                <View style={styles.containerLista}>
-                    <Text style={styles.txtLista}>{rowData}</Text>
+              <View style={styles.containerLista}>
+
+                <View style={{flex:1}}>
+
+                  <Text style={styles.txtTarefa}>{rowData.tarefa}</Text>
+                  <Text>{rowData.data}</Text>
                     
-                    <TouchableOpacity
-                        style={styles.botaoRemover}>
-                        <View>
-                         <Text style={styles.txtBotao}>-</Text>
-                        </View>
-                        
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.botaoEditar}>
-                        <View>
-                            <Image source={require('../imgs/edit.png')}/>
-                        </View>
-                        
-                    </TouchableOpacity>
                 </View>
+
+                <TouchableOpacity
+                  style={styles.botaoRemover}
+                  onPress={() => {this.removerTarefa(rowData.id)}}>
+                  <View>
+                    <Text style={styles.txtBotao}>-</Text>
+                  </View>
+                  
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.botaoEditar}
+                    onPress={()=>{this.editarTarefa(rowData.data)}}>
+                    <View>
+                        <Image source={require('../imgs/edit.png')}/>
+                    </View>
+                    
+                </TouchableOpacity>
+
+              </View>
         )}
         />
 
       </View>
     );
   }
+
+  removerTarefa(id){
+    alert('remover'+id)
+  }
+
+  editarTarefa(id){
+    alert('editar'+id)
+  }
+
   _storeData = async () => {
     try {
-      await AsyncStorage.setItem('@MySuperStore:key', 'I like to save it.');
+      await AsyncStorage.setItem('TASKS', 'Tarefa4');
     } catch (error) {
       // Error saving data
     }
@@ -59,6 +90,7 @@ export default class Lista extends Component<Props> {
       const value = await AsyncStorage.getItem('TASKS');
       if (value !== null) {
         // We have data!!
+        this.setState({})
         console.log(value);
       }
      } catch (error) {
@@ -70,7 +102,7 @@ export default class Lista extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#FFF',
   },
   containerLista: {
     flex: 1,
@@ -78,18 +110,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   lista: {
-    flex:1,
+    backgroundColor: '#F5FCFF',
     marginVertical: 10,
     padding: 10,
     borderColor: 'gray',
     borderWidth: 0.5,
     borderRadius: 20,
   },
-  txtLista: {
+  txtTarefa: {
     flex: 1,
     fontSize: 20,
-    padding: 10,
+    paddingTop: 10,
     color: 'black',
+  },
+  txtData: {
+    fontSize: 12,
+    paddingBottom: 10,
+    color: 'gray',
   },
   botaoEditar: {
     alignItems: 'center',
