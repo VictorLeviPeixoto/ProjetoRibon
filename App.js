@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View} from 'react-native';
+import {Text, View,AsyncStorage} from 'react-native';
 import Main from './src/components/Main'
 
 type Props = {};
@@ -13,16 +13,21 @@ export default class App extends Component<Props> {
   }
 
   componentWillMount(){
-    if (__DEV__) {
-      require('react-devtools');
-    }
+    console.log('componentWillMount');
     this._retrieveData();
+  }
+  componentDidMount(){
+    this._retrieveData();
+
   }
 
   render() {
-    return (
-      <Main listaTarefas={this.state.tarefasRecarregadas}/>
-    );
+    if(this.state.tarefasRecarregadas!=[]){
+      console.log('Pronto pra ir pra main: '+this.state.tarefasRecarregadas);
+      return (      
+        <Main listaTarefas={this.state.tarefasRecarregadas}/>
+      );
+    }
   }
 
   _retrieveData = async () => {
@@ -30,8 +35,11 @@ export default class App extends Component<Props> {
       const value = await AsyncStorage.getItem('TAREFA');
       if (value !== null) {
         // We have data!!
-        console.log(value);
-        this.setState({tarefasRecarregadas: value})
+        let x =  JSON.parse(value);
+        x.map((item) =>{this.state.tarefasRecarregadas.push(item)})
+        this.setState({tarefasRecarregadas: x});
+        console.log(this.state.tarefasRecarregadas);
+
       }
      } catch (error) {
        // Error retrieving data

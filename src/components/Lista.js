@@ -9,21 +9,20 @@ export default class Lista extends Component<Props> {
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.lista;
         this.state = {
-            dataSource: ds.cloneWithRows(props.lista),
+          listaTarefas: [],
+          dataSource: ds.cloneWithRows(props.lista),
         }
-        this._storeData;
-        this._retrieveData;
+
     }
 
     componentWillReceiveProps(newProps){
-      console.log('mudou');
       this.renovarLista();
     }
 
     renovarLista(){
       const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-      console.log('Lista',this.props.lista);
-      this.state.dataSource = ds.cloneWithRows(this.props.lista);
+      this.state.listaTarefas = this.props.lista;
+      this.state.dataSource = ds.cloneWithRows(this.state.listaTarefas);
     }
 
   render() {
@@ -55,7 +54,7 @@ export default class Lista extends Component<Props> {
 
                 <TouchableOpacity
                     style={styles.botaoEditar}
-                    onPress={()=>{this.editarTarefa(rowData.data)}}>
+                    onPress={()=>{this.editarTarefa(rowData.id)}}>
                     <View>
                         <Image source={require('../imgs/edit.png')}/>
                     </View>
@@ -71,20 +70,31 @@ export default class Lista extends Component<Props> {
   }
 
   removerTarefa(id){
-    alert('remover'+id)
+    let index = this.state.listaTarefas.findIndex(x => x.id === id);
+
+    let a = this.state.listaTarefas;
+
+    a.splice(index,1);
+
+    this.setState({a:this.state.listaTarefas})
+
+    this.componentWillReceiveProps();
+
+    this._storeData();
   }
 
   editarTarefa(id){
-    alert('editar'+id)
+    alert('editar'+id);
   }
 
   _storeData = async () => {
     try {
-      await AsyncStorage.setItem('TASKS', 'Tarefa4');
+      await AsyncStorage.setItem('TAREFA', JSON.stringify(this.state.listaTarefas));
     } catch (error) {
       // Error saving data
     }
   }
+
   _retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem('TASKS');

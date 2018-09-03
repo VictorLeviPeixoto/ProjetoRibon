@@ -14,7 +14,8 @@ type Props = {};
 export default class Main extends Component<Props> {
 
   constructor (props){
-      super(props)
+      super(props);
+      this.listaTarefas;
       this.state = {
           text: '',
           placeholder: 'Digite sua tarefa aqui...',
@@ -22,7 +23,14 @@ export default class Main extends Component<Props> {
 
       }
   }
+
+  componentWillMount(){
+    this.setState({arrayTarefas: this.props.listaTarefas});
+    console.log('tarefas na main'+this.props.listaTarefas);
+  }
+
   render() {
+    // this.setState({arrayTarefas: this.props.listaTarefas});
     return (
       <View style={styles.container}>
       
@@ -57,40 +65,36 @@ export default class Main extends Component<Props> {
     let tarefaArray = this.state.arrayTarefas;
     if (tarefa.length!==0){
       let d = new Date();
+      let dia = d.getDay();
+      let mes = d.getMonth();
 
+      if (dia<10)
+        dia = '0'+dia;
+      
+      if (mes<10)
+        mes = '0'+mes;
+      
 
       tarefaArray.push({
-        'tarefa': tarefa,
-        'data': 'Adcionado dia: '+d.getDay()+'/'+d.getMonth()+'/'+d.getFullYear(),
-        'id': d.getMilliseconds()
+        tarefa : tarefa,
+        data : 'Adcionado dia: '+dia+'/'+mes+'/'+d.getFullYear(),
+        id : d.getTime()
         });
 
 
       this.setState({text: ''});
       this.setState({arrayTarefas: tarefaArray});
-      console.log(this.state.arrayTarefas);
+      this._storeData();
     }
   }
 
-//   _storeData = async () => {
-//     i++;
-//     try {
-//       await AsyncStorage.setItem( i , this.state.text);
-//     } catch (error) {
-//       // Error saving data
-//     }
-//   }
-//   _retrieveData = async () => {
-//     try {
-//       const value = await AsyncStorage.getItem('TASKS');
-//       if (value !== null) {
-//         // We have data!!
-//         console.log(value);
-//       }
-//      } catch (error) {
-//        // Error retrieving data
-//      }
-//   }
+  _storeData = async () => {
+    try {
+      await AsyncStorage.setItem('TAREFA', JSON.stringify(this.state.arrayTarefas));
+    } catch (error) {
+      // Error saving data
+    }
+  }
 }
 
 const styles = StyleSheet.create({
