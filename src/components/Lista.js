@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, ListView, TouchableOpacity, Image, AsyncStorage} from 'react-native';
+import ModalEditar from './ModalEditar';
 
 type Props = {};
 export default class Lista extends Component<Props> {
+
   
     constructor (props){
         super(props);
@@ -11,6 +13,8 @@ export default class Lista extends Component<Props> {
         this.state = {
           listaTarefas: [],
           dataSource: ds.cloneWithRows(props.lista),
+          condicaoModal: false,
+          listaModal: []
         }
 
     }
@@ -54,7 +58,7 @@ export default class Lista extends Component<Props> {
 
                 <TouchableOpacity
                     style={styles.botaoEditar}
-                    onPress={()=>{this.editarTarefa(rowData.id)}}>
+                    onPress={()=>{this.editarTarefa(rowData)}}>
                     <View>
                         <Image source={require('../imgs/edit.png')}/>
                     </View>
@@ -64,6 +68,9 @@ export default class Lista extends Component<Props> {
               </View>
         )}
         />
+
+        <ModalEditar condicaoModal={this.state.condicaoModal} listaModal={this.state.listaModal}/>
+
 
       </View>
     );
@@ -83,8 +90,11 @@ export default class Lista extends Component<Props> {
     this._storeData();
   }
 
-  editarTarefa(id){
-    alert('editar'+id);
+  editarTarefa(arrayTarefa){
+    this.setState({
+      condicaoModal: true,
+      listaModal: arrayTarefa});
+      console.log(arrayTarefa);
   }
 
   _storeData = async () => {
