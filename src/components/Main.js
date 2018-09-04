@@ -77,7 +77,8 @@ export default class Main extends Component<Props> {
 
       tarefaArray.push({
         tarefa : tarefa,
-        data : 'Adcionado dia: '+dia+'/'+mes+'/'+d.getFullYear(),
+        dataCriacao : dia+'/'+mes+'/'+d.getFullYear(),
+        dataEdicao: 'Sem ediçao',
         id : d.getTime()
         });
 

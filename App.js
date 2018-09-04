@@ -24,8 +24,9 @@ export default class App extends Component<Props> {
   render() {
     if(this.state.tarefasRecarregadas!=[]){
       console.log('Pronto pra ir pra main: '+this.state.tarefasRecarregadas);
-      return (      
+      return (
         <Main listaTarefas={this.state.tarefasRecarregadas}/>
+        
       );
     }
   }
@@ -34,11 +35,10 @@ export default class App extends Component<Props> {
     try {
       const value = await AsyncStorage.getItem('TAREFA');
       if (value !== null) {
-        // We have data!!
         let x =  JSON.parse(value);
         x.map((item) =>{this.state.tarefasRecarregadas.push(item)})
         this.setState({tarefasRecarregadas: x});
-        console.log(this.state.tarefasRecarregadas);
+        console.log('recarregado: '+this.state.tarefasRecarregadas);
 
       }
      } catch (error) {

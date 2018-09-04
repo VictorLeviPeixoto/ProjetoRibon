@@ -21,6 +21,9 @@ export default class Lista extends Component<Props> {
 
     componentWillReceiveProps(newProps){
       this.renovarLista();
+
+      if(this.state.condicaoModal===true)
+       this.setState({condicaoModal: false});
     }
 
     renovarLista(){
@@ -30,6 +33,7 @@ export default class Lista extends Component<Props> {
     }
 
   render() {
+    
     return (
       <View style={styles.container}>
 
@@ -43,7 +47,8 @@ export default class Lista extends Component<Props> {
                 <View style={{flex:1}}>
 
                   <Text style={styles.txtTarefa}>{rowData.tarefa}</Text>
-                  <Text>{rowData.data}</Text>
+                  <Text>Data da criação: {rowData.dataCriacao}</Text>
+                  <Text>Data da edição: {rowData.dataEdicao}</Text>
                     
                 </View>
 
@@ -69,7 +74,11 @@ export default class Lista extends Component<Props> {
         )}
         />
 
-        <ModalEditar condicaoModal={this.state.condicaoModal} listaModal={this.state.listaModal}/>
+        <ModalEditar 
+        condicaoModal={this.state.condicaoModal}
+        listaModal={this.state.listaModal} 
+        listaCompleta={this.state.listaTarefas}
+        atualizarLista={() => this._retrieveData()}/>
 
 
       </View>
@@ -78,15 +87,10 @@ export default class Lista extends Component<Props> {
 
   removerTarefa(id){
     let index = this.state.listaTarefas.findIndex(x => x.id === id);
-
     let a = this.state.listaTarefas;
-
     a.splice(index,1);
-
-    this.setState({a:this.state.listaTarefas})
-
+    this.setState({listaTarefas: a});
     this.componentWillReceiveProps();
-
     this._storeData();
   }
 
@@ -106,12 +110,15 @@ export default class Lista extends Component<Props> {
   }
 
   _retrieveData = async () => {
+    console.log('EntrouRD');
     try {
-      const value = await AsyncStorage.getItem('TASKS');
+      const value = await AsyncStorage.getItem('TAREFA');
       if (value !== null) {
+        let listaRecarregada = JSON.parse(value);
         // We have data!!
-        this.setState({})
-        console.log(value);
+        this.setState({listaTarefas: listaRecarregada});
+        this.componentWillReceiveProps();
+        console.log('Lista voltando pra Lista'+value);
       }
      } catch (error) {
        // Error retrieving data
