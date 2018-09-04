@@ -21,9 +21,9 @@ export default class Lista extends Component<Props> {
 
     componentWillReceiveProps(newProps){
       this.renovarLista();
-
-      if(this.state.condicaoModal===true)
-       this.setState({condicaoModal: false});
+      if(this.state.condicaoModal === true){
+        this.setState({condicaoModal: false});
+      }
     }
 
     renovarLista(){
@@ -33,7 +33,6 @@ export default class Lista extends Component<Props> {
     }
 
   render() {
-    
     return (
       <View style={styles.container}>
 
@@ -47,8 +46,8 @@ export default class Lista extends Component<Props> {
                 <View style={{flex:1}}>
 
                   <Text style={styles.txtTarefa}>{rowData.tarefa}</Text>
-                  <Text>Data da criação: {rowData.dataCriacao}</Text>
-                  <Text>Data da edição: {rowData.dataEdicao}</Text>
+                  <Text>{rowData.dataCriacao}</Text>
+                  <Text>{rowData.dataEdicao}</Text>
                     
                 </View>
 
@@ -63,7 +62,7 @@ export default class Lista extends Component<Props> {
 
                 <TouchableOpacity
                     style={styles.botaoEditar}
-                    onPress={()=>{this.editarTarefa(rowData)}}>
+                    onPress={()=>{this._editarTarefa(rowData)}}>
                     <View>
                         <Image source={require('../imgs/edit.png')}/>
                     </View>
@@ -74,8 +73,8 @@ export default class Lista extends Component<Props> {
         )}
         />
 
-        <ModalEditar 
-        condicaoModal={this.state.condicaoModal}
+        <ModalEditar
+        condicaoModal={this.state.condicaoModal} 
         listaModal={this.state.listaModal} 
         listaCompleta={this.state.listaTarefas}
         atualizarLista={() => this._retrieveData()}/>
@@ -87,14 +86,19 @@ export default class Lista extends Component<Props> {
 
   removerTarefa(id){
     let index = this.state.listaTarefas.findIndex(x => x.id === id);
+
     let a = this.state.listaTarefas;
+
     a.splice(index,1);
-    this.setState({listaTarefas: a});
+
+    this.setState({a:this.state.listaTarefas})
+
     this.componentWillReceiveProps();
+
     this._storeData();
   }
 
-  editarTarefa(arrayTarefa){
+  _editarTarefa(arrayTarefa){
     this.setState({
       condicaoModal: true,
       listaModal: arrayTarefa});
@@ -110,15 +114,12 @@ export default class Lista extends Component<Props> {
   }
 
   _retrieveData = async () => {
-    console.log('EntrouRD');
     try {
-      const value = await AsyncStorage.getItem('TAREFA');
+      const value = await AsyncStorage.getItem('TASKS');
       if (value !== null) {
-        let listaRecarregada = JSON.parse(value);
         // We have data!!
-        this.setState({listaTarefas: listaRecarregada});
-        this.componentWillReceiveProps();
-        console.log('Lista voltando pra Lista'+value);
+        this.setState({})
+        console.log(value);
       }
      } catch (error) {
        // Error retrieving data

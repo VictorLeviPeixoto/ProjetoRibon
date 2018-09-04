@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View,Modal,TouchableOpacity, TextInput,AsyncStorage} from 'react-native';
+import {StyleSheet, Text, View,Modal,TouchableOpacity,AsyncStorage} from 'react-native';
 
 type Props = {};
-export default class ModalEditar extends Component<Props> {
+export default class ModalRemover extends Component<Props> {
   
     constructor (props){
         super(props);
@@ -10,19 +10,16 @@ export default class ModalEditar extends Component<Props> {
         this.state = {
             modalVisible: false,
             listaModal: [],
-            text: '',
-            placeHolder: 'Edite sua tarefa',
-            listaCompleta: [],
-            listaGravar: []
+            listaCompleta: []
         };
 
     }
 
     componentWillReceiveProps(newProps){
       this.setState({
-        modalVisible: newProps.condicaoModal,
-        listaModal: newProps.listaModal,
-        listaCompleta: newProps.listaCompleta});
+          modalVisible: newProps.condicaoModal,
+          listaModal: newProps.listaModal,
+          listaCompleta: newProps.listaCompleta});
     }
 
     setModalVisible(visible) {
@@ -42,14 +39,7 @@ export default class ModalEditar extends Component<Props> {
 
             <View style={styles.containerModal}>
               <View style={styles.modal}>
-                <Text style={styles.txtHeader}>ediçao da tarefa: {this.state.listaModal.tarefa}</Text>
-
-                <TextInput
-                    style={styles.txtInput}
-                    onChangeText={text => this.setState({text})}
-                    placeholder={this.state.placeHolder}
-                    value={this.state.text}
-                />
+                <Text style={styles.txtHeader}>Deseja remover a tarefa {this.state.listaModal.tarefa}?</Text>
 
                 <View style={styles.containerBotoes}>
 
@@ -63,10 +53,10 @@ export default class ModalEditar extends Component<Props> {
 
                   <TouchableOpacity
                   title = 'editar'
-                  onPress = {() => this.editarTarefa()}
+                  onPress = {() => this.removerTarefa(this.state.listaModal.id)}
                   style = {styles.botaoEditar}
                   >
-                    <Text style={styles.txtBotao}>EDITAR</Text>
+                    <Text style={styles.txtBotao}>REMOVER</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -78,73 +68,26 @@ export default class ModalEditar extends Component<Props> {
     );
   }
   cancelar(){
-    this.setState({text: '',modalVisible: false})
-  }
-  editarTarefa(){
-    console.log('Entrou');
-    let txt = this.state.text;
-    let criacao = this.state.listaModal.dataCriacao;
-    let id = this.state.listaModal.id;
-    let data = new Date();
-    let dia = data.getDay();
-    let mes = data.getMonth();
-
-    if (dia<10)
-      dia = '0'+dia;
-
-    if(mes<10)
-      mes = '0'+mes;    
-
-    if(txt.length!==0){
-
-      this.removerTarefa(id);
-
-      let arrayTarefas = this.state.listaCompleta;
-
-      arrayTarefas.push({
-        tarefa: txt,
-        dataCriacao: criacao,
-        dataEdicao: dia+'/'+mes+'/'+data.getFullYear(),
-        id: id});
-
-      this.setState({listaCompleta: arrayTarefas});
-      this._storeData(); 
-      this.setState({modalVisible: false});
-      this.props.atualizarLista();
-      this.setState({text: ''});
-
-    }
-
+    this.setState({text: '',modalVisible: false});
   }
 
   removerTarefa(id){
     let index = this.state.listaCompleta.findIndex(x => x.id === id);
     let a = this.state.listaCompleta;
     a.splice(index,1);
-    this.setState({listaCompleta: a});
+    this.setState({a: this.state.listaCompleta});
+    this.props.atualizarLista();
+    this._storeData();
+    this.setState({modalVisible: false})
   }
 
   _storeData = async () => {
     try {
-      this.state.listaCompleta.map(item => console.log('tarefas: '+item.tarefa));
       await AsyncStorage.setItem('TAREFA', JSON.stringify(this.state.listaCompleta));
     } catch (error) {
       // Error saving data
+      console.log('Deu ruim');
     }
-  }
-
-  _retrieveData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('TAREFA');
-      if (value !== null) {
-        // We have data!!
-        console.log(value);
-        let a = JSON.parse(value);
-        a.map((item) => console.log('tarefa recarregada: '+item.tarefa));
-      }
-     } catch (error) {
-       // Error retrieving data
-     }
   }
 
 }
